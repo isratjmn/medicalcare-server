@@ -81,7 +81,6 @@ const getMyDSIntoDB = async (
             }),
         });
     }
-
     const whereConditions: Prisma.DoctorSchedulesWhereInput =
         andConditions.length > 0 ? { AND: andConditions } : {};
     const result = await prisma.doctorSchedules.findMany({
@@ -106,8 +105,24 @@ const getMyDSIntoDB = async (
     };
 };
 
-const deleteFromDB = async () => {
-    console.log("Doctor Schedule Deleted From DB");
+
+const deleteFromDB = async (user: IAuthUser, scheduleId: string) => {
+    const doctordata = await prisma.doctor.findUniqueOrThrow({
+        where: {
+            email: user?.email
+        }
+    });
+
+    const result = await prisma.doctorSchedules.delete({
+        where: {
+            doctorId_scheduleId: {
+                doctorId: doctordata.id,
+                scheduleId: scheduleId
+            }
+        }
+    });
+
+    return result;
 };
 
 
