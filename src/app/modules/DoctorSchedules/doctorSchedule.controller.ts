@@ -42,7 +42,6 @@ const deleteMyDoctorSchedule = catchAsync(
 
         const user = req.user;
         const { id } = req.params;
-
         const result = await doctorScheduleService.deleteFromDB(user as IAuthUser, id);
         sendResponse(res, {
             statusCode: httpStatus.OK,
