@@ -150,6 +150,7 @@ const deleteFromDB = async (user: IAuthUser, scheduleId: string) => {
             email: user?.email
         }
     });
+    console.log("doctorData:", { doctorData });
 
     if (!doctorData)
     {
@@ -165,8 +166,10 @@ const deleteFromDB = async (user: IAuthUser, scheduleId: string) => {
         }
     });
 
+    console.log(isBookedSchedule);
     if (isBookedSchedule)
     {
+
         throw new APIError(httpStatus.BAD_REQUEST, "You cannot delete the schedule because it is already booked.");
     }
     // Delete the schedule
@@ -179,7 +182,7 @@ const deleteFromDB = async (user: IAuthUser, scheduleId: string) => {
         }
     });
 
-    return result;
+    return null;
 };
 
 

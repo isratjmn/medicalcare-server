@@ -53,6 +53,7 @@ const getAllDoctors = async (filters: IDoctorFilterRequest, options: IPagination
     andConditions.push({
         isDeleted: false
     });
+    
     const whereConditions: Prisma.DoctorWhereInput =
         andConditions.length > 0 ? {
             AND: andConditions
