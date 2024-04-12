@@ -4,6 +4,8 @@ import { IAuthUser } from "../../interfaces/common";
 import { v4 as uuidv4 } from 'uuid';
 import { IPaginationOptions } from '../../interfaces/pagination';
 import { paginationHelper } from '../../../helpers/paginationHelper';
+import shortid from 'shortid';
+
 
 const createAppointment = async (user: IAuthUser, payload: any) => {
     const patientData = await prisma.patient.findUniqueOrThrow({
@@ -57,8 +59,9 @@ const createAppointment = async (user: IAuthUser, payload: any) => {
         // PH-Medical-Care-dateTime
         const today = new Date();
 
-        const transactionId = `PH-Medical-Care-${today.getFullYear()}-${uuidv4()}`;
-        console.log(transactionId);
+        // const transactionId = `PH-Medical-Care-${today.getFullYear()}-${uuidv4()}`;
+        // Generate a shorter transaction ID
+        const transactionId = `PH-${shortid.generate()}`;
 
         await tx.payment.create({
             data: {

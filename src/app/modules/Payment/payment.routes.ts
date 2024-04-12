@@ -8,4 +8,6 @@ router.post(
     PaymentController.initPayment
 );
 
+router.get("/ipn", PaymentController.validatePayment)
+
 export const PaymentRoutes = router;

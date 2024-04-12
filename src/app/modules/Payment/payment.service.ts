@@ -2,8 +2,10 @@
 import axios from "axios";
 import config from "../../../config";
 import prisma from "../../../shared/prisma";
+import { SSLService } from "../SSL/ssl.service";
+import { PamentStatus } from "@prisma/client";
 
-const initPayment = async (appointmentId: string) => {
+/* const initPayment = async (appointmentId: string) => {
     const paymentData = await prisma.payment.findFirstOrThrow({
         where: {
             appointmentId
@@ -15,54 +17,122 @@ const initPayment = async (appointmentId: string) => {
             }
         }
     });
-    console.log(paymentData);
-
-    const data = {
-        store_id: config.ssl.store_id,
-        store_passwd: config.ssl.store_pass,
-        total_amount: paymentData?.amount,
-        currency: 'BDT',
-        tran_id: paymentData.transactionId,
-        success_url: config.ssl.success_url,
-        cancel_url: config.ssl.cancel_url,
-        fail_url: config.ssl.fail_url,
-        ipn_url: 'http://localhost:3030/ipn',
-        shipping_method: 'N/A',
-        product_name: 'Appointment',
-        product_category: 'Service',
-        product_profile: 'general',
-        cus_name: paymentData.appointment.patient.name,
-        cus_email: paymentData.appointment.patient.email,
-        cus_add1: paymentData.appointment.patient.address,
-        cus_add2: 'N/A',
-        cus_city: 'Dhaka',
-        cus_state: 'Dhaka',
-        cus_postcode: '1000',
-        cus_country: 'Bangladesh',
-        cus_phone: paymentData.appointment.patient.contactNumber,
-        cus_fax: '01711111111',
-        ship_name: 'Customer Name',
-        ship_add1: 'N/A',
-        ship_add2: 'N/A',
-        ship_city: 'Dhaka',
-        ship_state: 'Dhaka',
-        ship_postcode: 1000,
-        ship_country: 'N/A',
+    const initPaymentData = {
+        amount: paymentData.amount,
+        transactionId: paymentData.transactionId,
+        name: paymentData.appointment.patient.name,
+        email: paymentData.appointment.patient.email,
+        address: paymentData.appointment.patient.address,
+        contactNumber: paymentData.appointment.patient.contactNumber,
+    };
+    const result = await SSLService.initPayment(initPaymentData);
+    return {
+        paymentUrl: result.GatewayPageURL
     };
 
-    const response = await axios({
-        method: 'post',
-        url: config.ssl.ssl_payment_api,
-        data: data,
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
+}; */
+
+const initPayment = async (appointmentId: any) => {
+    try
+    {
+        const paymentData = await prisma.payment.findFirst({
+            where: {
+                appointmentId
+            },
+            include: {
+                appointment: {
+                    include: {
+                        patient: true
+                    }
+                }
+            }
+        });
+        // Check if payment data exists
+        if (!paymentData)
+        {
+            throw new Error(`Payment data for appointment ID ${appointmentId} not found.`);
         }
-    });
-    console.log(response.data);
+        // Construct payment information
+        const initPaymentData = {
+            amount: paymentData.amount,
+            transactionId: paymentData.transactionId,
+            name: paymentData.appointment.patient.name,
+            email: paymentData.appointment.patient.email,
+            address: paymentData.appointment.patient.address || "",
+            contactNumber: paymentData.appointment.patient.contactNumber || "",
+        };
+        // Initiate payment
+        const result = await SSLService.initPayment(initPaymentData);
+        // Check if payment initiation was successful
+        if (!result || !result.GatewayPageURL)
+        {
+            throw new Error('Failed to initiate payment.');
+        }
+        return {
+            paymentUrl: result.GatewayPageURL
+        };
+    } catch (err: any)
+    {
+        console.error('Error initiating payment:', err.message);
+        throw err;
+    }
 };
 
 
+/* amount = 1150.00 & bank_tran_id=151114130739MqCBNx5 & card_brand=VISA & card_issuer=BRAC + BANK % 2C + LTD.& card_issuer_country=Bangladesh & card_issuer_country_code=BD & card_no=432149XXXXXX0667 & card_type=VISA - Brac + bank¤cy = BDT & status=VALID & store_amount=1104.00 & store_id=progr6612bd4268348 & tran_date=2015 - 11 - 14 + 13 % 3A07 % 3A12 & tran_id=5646dd9d4b484 & val_id=151114130742Bj94IBUk4uE5GRj & verify_sign=df9e6103454a0c056c93e05ea2e28080 & verify_key=amount % 2Cbank_tran_id % 2Ccard_brand % 2Ccard_issuer % 2Ccard_issuer_country % 2Ccard_issuer_country_code % 2Ccard_no % 2Ccard_type % 2Ccurrency % 2Cstatus % 2Cstore_amount % 2Cstore_id % 2Ctran_date % 2Ctran_id % 2Cval_id; */
+
+
+// ssl Commercez ipn listener Query
+const validatePayment = async (payload: any) => {
+    /* if (!payload || !payload.status || !(payload.status === "VALID"))
+    {
+        return {
+            message: "invalid Payment....!!"
+        };
+    }
+    const response = await SSLService.validatePayment(payload);
+    if (response.status !== "VALID")
+    {
+        return {
+            messgae: "Payment Failed..!!"
+        };
+    } */
+
+    const response = payload;
+    await prisma.$transaction(async (tx) => {
+        const updatedPaymentData = await tx.payment.update({
+            /* where: {
+                transactionId: response.tran_id
+            }, data: {
+                status: PamentStatus.PAID,
+                paymentGatewayData: response
+            } */
+            where: {
+                transactionId: 'PH-HUv9Pw5QX'
+            },
+            data: {
+                status: 'PAID',
+                paymentGatewayData: {
+                    tran_id: 'PH-HUv9Pw5QX'
+                }
+            }
+        });
+        await tx.appointment.update({
+            where: {
+                id: updatedPaymentData.appointmentId
+            },
+            data: {
+                paymentStatus: PamentStatus.PAID
+            }
+        });
+    });
+    return {
+        message: "Payment Successful ...!!"
+    };
+
+};
 
 export const PaymentService = {
-    initPayment
+    initPayment,
+    validatePayment
 };
