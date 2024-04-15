@@ -1,10 +1,13 @@
-import { Prisma, Schedule, UserRole } from '@prisma/client';
+import { AppointmentRoutes } from './appointment.routes';
+import { AppointmentStatus, Prisma, Schedule, UserRole } from '@prisma/client';
 import prisma from "../../../shared/prisma";
 import { IAuthUser } from "../../interfaces/common";
 import { v4 as uuidv4 } from 'uuid';
 import { IPaginationOptions } from '../../interfaces/pagination';
 import { paginationHelper } from '../../../helpers/paginationHelper';
 import shortid from 'shortid';
+import APIError from '../../errors/APIErrors';
+import httpStatus from 'http-status';
 
 
 const createAppointment = async (user: IAuthUser, payload: any) => {
@@ -104,8 +107,6 @@ const getMyAppointmentIntoDB = async (
             }
         });
     }
-
-
     if (Object.keys(filterData).length > 0)
     {
         const filterConditions = Object.keys(filterData).map(key => ({
@@ -115,7 +116,6 @@ const getMyAppointmentIntoDB = async (
         }));
         andConditions.push(...filterConditions);
     }
-
     const whereConditions: Prisma.AppointmentWhereInput =
         andConditions.length > 0 ? {
             AND: andConditions
@@ -140,7 +140,6 @@ const getMyAppointmentIntoDB = async (
             schedule: true
         }
     });
-
     const total = await prisma.appointment.count({
         where: whereConditions
     });
@@ -151,12 +150,46 @@ const getMyAppointmentIntoDB = async (
         }, data: result
     };
 
+};
 
+const changeAppointmentStatus = async (appointmentId: string, status: AppointmentStatus, user: IAuthUser) => {
+    // console.log(appointmentId, status);
+    const appointmentData = await prisma.appointment.findUnique({
+        where: {
+            id: appointmentId
+        }, include: {
+            doctor: true
+        }
+    });
+    console.log(appointmentData);
+    if (user?.role === UserRole.DOCTOR)
+    {
+        if (!(user.email === appointmentData?.doctor.email))
+        {
+            throw new APIError(httpStatus.BAD_REQUEST, "This is not your Appointment !!");
+
+        }
+    }
+
+    const result = await prisma.appointment
+        .update({
+            where: {
+                id: appointmentId
+            }, data: {
+                status
+            }
+        });
+    return result;
+
+};
+
+
+const cancelUnpaidAppointments = async () => {
 
 };
 
 
 export const AppointmentService = {
-    createAppointment, getMyAppointmentIntoDB
+    createAppointment, getMyAppointmentIntoDB, changeAppointmentStatus
 };
 

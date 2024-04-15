@@ -14,11 +14,16 @@ router.post("/",
     // Add Zod Validation to Create Appointment
     AppointmentController.createAppointment);
 
-
 /*
 get all appointments with filter 
 only accessable for admin & Super Admin
 endpoint: /appointment 
  */
+
+router.patch("/status/:id",
+    auth(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.DOCTOR),
+    AppointmentController.changeAppointmentStatus);
+
+
 
 export const AppointmentRoutes = router;
