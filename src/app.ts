@@ -5,6 +5,8 @@ import router from "./app/routes";
 import httpStatus from "http-status";
 import globalErrorHnadlers from "./app/middlewares/globalErrorHandlers";
 import cookieParser from "cookie-parser";
+import { AppointmentService } from "./app/modules/Appointment/appointment.service";
+import cron from "node-cron";
 
 const app: Application = express();
 
@@ -19,6 +21,17 @@ app.use(
 	})
 );
 
+cron.schedule('* * * * *', () => {
+	console.log('running a task every minute');
+	try
+	{
+		AppointmentService.cancelUnpaidAppointments();
+	} catch (err)
+	{
+		console.log(err);
+	}
+});
+
 app.get("/", function (req: Request, res: Response) {
 	res.send({
 		msg: "HealthCare Server........... !!!",
@@ -26,7 +39,6 @@ app.get("/", function (req: Request, res: Response) {
 });
 
 app.use("/api/v1", router);
-
 app.use(globalErrorHnadlers);
 
 app.use((req: Request, res: Response, next: NextFunction) => {
