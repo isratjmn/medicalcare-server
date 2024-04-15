@@ -108,12 +108,12 @@ const validatePayment = async (payload: any) => {
                 paymentGatewayData: response
             } */
             where: {
-                transactionId: 'PH-HUv9Pw5QX'
+                transactionId: 'PH-Nbz8N8WcX'
             },
             data: {
                 status: 'PAID',
                 paymentGatewayData: {
-                    tran_id: 'PH-HUv9Pw5QX'
+                    tran_id: 'PH-Nbz8N8WcX'
                 }
             }
         });
