@@ -21,7 +21,33 @@ const reviewIntoDB = catchAsync(async (
     });
 });
 
+const allReviewsFromDB = catchAsync(async (req: Request, res: Response) => {
+    const result = await ReviewService.getAllReviews();
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "All reviews retrieved successfully...",
+        data: result
+    });
+});
+
+const getReviewFromDB = catchAsync(
+    async (req: Request, res: Response) => {
+        const { id } = req.params;
+        const singleReview = await ReviewService.getSingleReview(id);
+        sendResponse(res, {
+            statusCode: httpStatus.OK,
+            success: true,
+            message: "Single Patient Review Fetched Successfully...!!",
+            data: singleReview
+
+        });
+    }
+);
+
 
 export const ReviewController = {
-    reviewIntoDB
+    reviewIntoDB,
+    allReviewsFromDB,
+    getReviewFromDB
 };

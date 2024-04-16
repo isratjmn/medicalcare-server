@@ -18,7 +18,6 @@ const patientReview = async (user: IAuthUser, payload: any) => {
     {
         throw new APIError(httpStatus.BAD_REQUEST, "This is Not your Apppoinment!!");
     }
-
     return await prisma.$transaction(async (tx) => {
         const result = await tx.review.create({
             data: {
@@ -29,13 +28,12 @@ const patientReview = async (user: IAuthUser, payload: any) => {
                 comment: payload.comment
             }
         });
-
         const averageRating = await tx.review.aggregate({
             _avg: {
                 rating: true
             }
         });
-        await tx.doctor.update({ 
+        await tx.doctor.update({
             where: {
                 id: result.doctorId
             },
@@ -45,10 +43,27 @@ const patientReview = async (user: IAuthUser, payload: any) => {
         });
         return result;
     });
+};
 
+const getAllReviews = async () => {
+    const reviews = await prisma.review.findMany({});
+    return reviews;
+};
+
+const getSingleReview = async (id: string) => {
+    const result = prisma.review.findUniqueOrThrow({
+        where: {
+            id
+        }, include: {
+            patient: true,
+            doctor: true,
+            appointment: true
+        }
+    });
+    return result;
 
 };
 
 export const ReviewService = {
-    patientReview
+    patientReview, getAllReviews, getSingleReview
 };

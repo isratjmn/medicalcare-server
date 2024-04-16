@@ -10,4 +10,8 @@ router.post("/",
     ReviewController.reviewIntoDB
 );
 
+router.get("/", ReviewController.allReviewsFromDB);
+
+router.get("/:id", ReviewController.getReviewFromDB);
+
 export const ReviewRoutes = router;
