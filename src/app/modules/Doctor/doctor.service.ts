@@ -8,9 +8,7 @@ import { IPaginationOptions } from '../../interfaces/pagination';
 const getAllDoctors = async (filters: IDoctorFilterRequest, options: IPaginationOptions) => {
     const { limit, page, skip } = paginationHelper.calculatePagination(options);
     const { searchTerm, specialities, ...filterData } = filters;
-
     const andConditions: Prisma.DoctorWhereInput[] = [];
-
     if (searchTerm)
     {
         andConditions.push({
@@ -40,7 +38,6 @@ const getAllDoctors = async (filters: IDoctorFilterRequest, options: IPagination
             }
         });
     }
-
     if (Object.keys(filterData).length > 0)
     {
         const filterConditions = Object.keys(filterData).map(key => ({
@@ -53,7 +50,6 @@ const getAllDoctors = async (filters: IDoctorFilterRequest, options: IPagination
     andConditions.push({
         isDeleted: false
     });
-    
     const whereConditions: Prisma.DoctorWhereInput =
         andConditions.length > 0 ? {
             AND: andConditions
@@ -64,7 +60,8 @@ const getAllDoctors = async (filters: IDoctorFilterRequest, options: IPagination
         take: limit,
         orderBy: options.sortBy && options.sortOrder ? {
             [options.sortBy]: options.sortOrder
-        } : { createdAt: "desc" },
+        } : { averageRating: "desc" },
+
         include: {
             doctorSpecialties: {
                 include: {
