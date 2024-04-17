@@ -61,7 +61,6 @@ const getSingleReview = async (id: string) => {
         }
     });
     return result;
-
 };
 
 export const ReviewService = {

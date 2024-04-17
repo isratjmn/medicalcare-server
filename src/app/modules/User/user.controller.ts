@@ -9,43 +9,43 @@ import sendResponse from "../../../shared/sendResponse";
 import httpStatus from "http-status";
 import { IAuthUser } from "../../interfaces/common";
 
-const createAdmin = async (req: Request, res: Response) => {
-	const result = await userService.createAdmin(req);
-	res.status(200).json({
-		success: true,
-		message: "Admin Created Successfully!!",
-		data: result,
-	});
-};
+const createAdmin = catchAsync(
+	async (req: Request, res: Response) => {
+		const result = await userService.createAdmin(req);
+		sendResponse(res, {
+			success: true,
+			message: "Admin Created Successfully!!",
+			data: result,
+		});
+	}
+);
 
-const createDoctor = async (req: Request, res: Response) => {
-	const result = await userService.createDoctor(req);
-	res.status(200).json({
-		success: true,
-		message: "Doctor Created Successfully!!",
-		data: result,
-	});
-};
 
-const createPatient = async (req: Request, res: Response) => {
-	const result = await userService.createPatient(req);
-	res.status(200).json({
-		success: true,
-		message: "Patient Created Successfully!!",
-		data: result,
+const createDoctor = catchAsync(
+	async (req: Request, res: Response) => {
+		const result = await userService.createDoctor(req);
+		sendResponse(res, {
+			success: true,
+			message: "Doctor Created Successfully!!",
+			data: result,
+		});
 	});
-};
+
+const createPatient = catchAsync(
+	async (req: Request, res: Response) => {
+		const result = await userService.createPatient(req);
+		sendResponse(res, {
+			success: true,
+			message: "Patient Created Successfully!!",
+			data: result,
+		});
+	});
 
 
 const getAllFromDB = catchAsync(
 	async (req: Request, res: Response) => {
-
 		const filters = pick(req.query, UserFilterableFields);
-
-		console.log(filters);
-
 		const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder']);
-
 		const result = await userService.getAllUser(options, filters);
 		sendResponse(res, {
 			statusCode: httpStatus.OK,
