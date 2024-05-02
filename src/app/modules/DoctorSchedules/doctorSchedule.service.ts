@@ -37,7 +37,6 @@ const getMyDSIntoDB = async (
 ) => {
     const { limit, page, skip } = paginationHelper.calculatePagination(options);
     const { startDate, endDate, ...filterData } = filters;
-    console.log(filterData);
 
     const andConditions = [];
     if (startDate && endDate)
@@ -108,41 +107,6 @@ const getMyDSIntoDB = async (
 };
 
 
-/* const deleteFromDB = async (user: IAuthUser, scheduleId: string) => {
-    const doctorData = await prisma.doctor.findUniqueOrThrow({
-        where: {
-            email: user?.email
-        }
-    });
-
-    const isBookedSchedule = await prisma.doctorSchedules.findFirst({
-        where: {
-
-            doctorId: doctorData.id,
-            scheduleId: scheduleId,
-            isBooked: true
-        }
-    });
-    console.log(isBookedSchedule);
-
-    if (isBookedSchedule)
-    {
-        throw new APIError(httpStatus.BAD_REQUEST, "you can not delete the schedule because schedule is already Booked!!");
-
-    }
-
-    const result = await prisma.doctorSchedules.delete({
-        where: {
-            doctorId_scheduleId: {
-                doctorId: doctorData.id,
-                scheduleId: scheduleId
-            }
-        }
-    });
-
-    return result;
-}; */
-
 const deleteFromDB = async (user: IAuthUser, scheduleId: string) => {
     // Find the doctor data based on the user's email
     const doctorData = await prisma.doctor.findUnique({
@@ -150,7 +114,7 @@ const deleteFromDB = async (user: IAuthUser, scheduleId: string) => {
             email: user?.email
         }
     });
-    console.log("doctorData:", { doctorData });
+
 
     if (!doctorData)
     {
@@ -166,7 +130,7 @@ const deleteFromDB = async (user: IAuthUser, scheduleId: string) => {
         }
     });
 
-    console.log(isBookedSchedule);
+
     if (isBookedSchedule)
     {
 

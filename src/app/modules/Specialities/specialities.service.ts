@@ -2,9 +2,9 @@ import { Request } from "express";
 import { fileUploader } from "../../../helpers/FileUploader";
 import prisma from "../../../shared/prisma";
 import { IFile } from "../../interfaces/file";
+import { Specialties } from "@prisma/client";
 
 const insertIntoDB = async (req: Request) => {
-
     const file = req.file as IFile;
     if (file)
     {
@@ -14,11 +14,23 @@ const insertIntoDB = async (req: Request) => {
             data: req.body
         });
         return result;
-
     }
 };
 
+const getAllFromDB = async (): Promise<Specialties[]> => {
+    return await prisma.specialties.findMany();
+};
+
+
+const deleteFromDB = async (id: string): Promise<Specialties> => {
+    const result = await prisma.specialties.delete({
+        where: {
+            id,
+        },
+    });
+    return result;
+};
 
 export const SpecialitiesServices = {
-    insertIntoDB
+    insertIntoDB, getAllFromDB, deleteFromDB
 };

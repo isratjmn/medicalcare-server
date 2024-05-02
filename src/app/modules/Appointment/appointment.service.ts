@@ -89,7 +89,7 @@ const getMyAppointmentIntoDB = async (
     const {
         limit, page, skip } = paginationHelper.calculatePagination(options);
     const { ...filterData } = filters;
-    console.log(user, filters, options);
+
 
     const andConditions: Prisma.AppointmentWhereInput[] = [];
 
@@ -154,7 +154,7 @@ const getMyAppointmentIntoDB = async (
 };
 
 const changeAppointmentStatus = async (appointmentId: string, status: AppointmentStatus, user: IAuthUser) => {
-    // console.log(appointmentId, status);
+
     const appointmentData = await prisma.appointment.findUnique({
         where: {
             id: appointmentId
@@ -162,7 +162,7 @@ const changeAppointmentStatus = async (appointmentId: string, status: Appointmen
             doctor: true
         }
     });
-    console.log(appointmentData);
+
     if (user?.role === UserRole.DOCTOR)
     {
         if (!(user.email === appointmentData?.doctor.email))
@@ -229,7 +229,7 @@ const cancelUnpaidAppointments = async () => {
             });
         }
     });
-    
+
 
 
 };

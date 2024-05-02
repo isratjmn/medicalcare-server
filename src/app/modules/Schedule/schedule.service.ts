@@ -6,6 +6,13 @@ import { IPaginationOptions } from "../../interfaces/pagination";
 import { paginationHelper } from "../../../helpers/paginationHelper";
 import { IAuthUser } from "../../interfaces/common";
 
+const convertDateTime = async (date: Date) => {
+    const offset = date.getTimezoneOffset() * 60000;
+    return new Date(date.getTime() + offset);
+
+};
+
+
 const createScheduleIntoDB = async (payload: ISchedule): Promise<Schedule[]> => {
     const { startDate, endDate, startTime, endTime } = payload;
     const intervalTime = 30;
@@ -28,10 +35,20 @@ const createScheduleIntoDB = async (payload: ISchedule): Promise<Schedule[]> => 
         );
         while (startDateTime < endDateTime)
         {
+            const startDate = await convertDateTime(startDateTime);
+            const endDate = await convertDateTime(addMinutes(startDateTime, intervalTime));
+
+
             const scheduleData = {
+                startDateTime: startDate,
+                endDateTime: endDate
+            };
+
+            /* const scheduleData = {
                 startDateTime: startDateTime,
                 endDateTime: addMinutes(startDateTime, intervalTime)
-            };
+            }; */
+
             const existingSchedule = await prisma.schedule.findFirst({
                 where: {
                     startDateTime: scheduleData.startDateTime,
@@ -52,6 +69,7 @@ const createScheduleIntoDB = async (payload: ISchedule): Promise<Schedule[]> => 
     return schedules;
 };
 
+
 const getAllSchedule = async (
     filters: IFilterRequest,
     options: IPaginationOptions,
@@ -59,7 +77,7 @@ const getAllSchedule = async (
 ) => {
     const { limit, page, skip } = paginationHelper.calculatePagination(options);
     const { startDate, endDate, ...filterData } = filters;
-    console.log({ startDate, endDate });
+    
     const andConditions: Prisma.ScheduleWhereInput[] = [];
     if (startDate && endDate)
     {
@@ -98,12 +116,12 @@ const getAllSchedule = async (
             }
         }
     });
-    console.log(doctorSchedules);
+
 
     const doctorScheduleIds = doctorSchedules.map(schedule =>
         schedule.scheduleId
     );
-    console.log(doctorScheduleIds);
+    
     const result = await prisma.schedule.findMany({
         where: {
             ...whereConditions,
@@ -125,6 +143,7 @@ const getAllSchedule = async (
             }
         },
     });
+
     return {
         meta: {
             total,
@@ -134,7 +153,20 @@ const getAllSchedule = async (
     };
 };
 
+const getScheduleById = async (id: string): Promise<Schedule | null> => {
+    const result = await prisma.schedule.findUnique({
+        where: {
+            id
+        }
+    });
+    // console.log(result?.startDateTime.getHours() + ":" + result?.startDateTime.getMinutes());
+
+    return result;
+};
+
 
 export const ScheduleService = {
-    createScheduleIntoDB, getAllSchedule
+    createScheduleIntoDB,
+    getAllSchedule,
+    getScheduleById
 };

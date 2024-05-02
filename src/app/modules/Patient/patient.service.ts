@@ -84,7 +84,7 @@ const singlePatientt = async (id: string) => {
 
 const updatePatient = async (id: string, payload: Partial<IPatientUpdate>): Promise<Patient | null> => {
     const { patienthealthData, medicalReport, ...patientData } = payload;
-    console.log(medicalReport);
+
     const patientInfo = await prisma.patient.findUniqueOrThrow({
         where: {
             id,
@@ -117,7 +117,7 @@ const updatePatient = async (id: string, payload: Partial<IPatientUpdate>): Prom
                     patientId: patientInfo.id
                 }
             });
-            console.log(healthData);
+
         }
         if (medicalReport)
         {

@@ -9,7 +9,7 @@ import { IAuthUser } from "../../interfaces/common";
 const fetchDashboardMetaData = catchAsync(
     async (req: Request & { user: IAuthUser; }, res: Response) => {
         const user = req.user;
-        console.log(user);
+
         const result = await MetaService.fetchDashboardMetaData(user as IAuthUser);
         sendResponse(res, {
             statusCode: httpStatus.OK,

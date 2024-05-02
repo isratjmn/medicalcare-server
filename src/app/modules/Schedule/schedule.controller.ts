@@ -35,7 +35,23 @@ const getAllScheduleFromDB = catchAsync(
         });
     });
 
+const getScheduleByIdFromDB = catchAsync(
+    async (req: Request & { user?: IAuthUser; }, res: Response) => {
+        
+        const id = req.params.id;
+        const result = await ScheduleService.getScheduleById(id);
+        sendResponse(res, {
+            statusCode: httpStatus.OK,
+            success: true,
+            message: "Schedule Fetched Successfully by ID....!!!",
+            data: result
+
+        });
+    }
+);
+
 export const ScheduleController = {
     createScheduleIntoDB,
-    getAllScheduleFromDB
+    getAllScheduleFromDB,
+    getScheduleByIdFromDB
 };

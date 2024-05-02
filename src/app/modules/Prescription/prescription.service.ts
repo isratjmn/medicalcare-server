@@ -33,7 +33,7 @@ const InsertPrescription = async (user: IAuthUser, payload: Partial<Prescription
             patient: true
         }
     });
-    console.log({ result });
+    
     return result;
 
 };

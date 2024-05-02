@@ -12,4 +12,6 @@ router.get('/',
     auth(UserRole.DOCTOR),
     ScheduleController.getAllScheduleFromDB);
 
+router.get("/:id", ScheduleController.getScheduleByIdFromDB);
+
 export const ScheduleRoutes = router;
