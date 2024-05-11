@@ -7,20 +7,20 @@ import { fileUploader } from "../../../helpers/FileUploader";
 import { IFile } from "../../interfaces/file";
 import { IPaginationOptions } from "../../interfaces/pagination";
 import { paginationHelper } from "../../../helpers/paginationHelper";
-import { userInfo } from 'os';
+
 import { IAuthUser } from '../../interfaces/common';
+import { hashedPassword } from './user.utils';
 
 
 const createAdmin = async (req: Request): Promise<Admin> => {
 	const file = req.file as IFile;
 	if (file)
 	{
-		// If a file is uploaded, upload it to Cloudinary
 		const uploadResult = await fileUploader.uploadToCloudinary(file);
 		// Assuming 'profilePhoto' is a field in the admin's data
 		req.body.admin.profilePhoto = uploadResult?.secure_url;
 	}
-	const hasedPassword: string = await bcrypt.hash(req.body.password, 12);
+	const hasedPassword: string = await hashedPassword(req.body.password);
 	const userData = {
 		email: req.body.admin.email,
 		password: hasedPassword,
@@ -49,7 +49,7 @@ const createDoctor = async (req: Request): Promise<Doctor> => {
 		// Assuming 'profilePhoto' is a field in the admin's data
 		req.body.doctor.profilePhoto = uploadResult?.secure_url;
 	}
-	const hasedPassword: string = await bcrypt.hash(req.body.password, 12);
+	const hasedPassword: string = await hashedPassword(req.body.password);
 
 	const userData = {
 		email: req.body.doctor.email,
@@ -76,7 +76,8 @@ const createPatient = async (req: Request) => {
 		const uploadResult = await fileUploader.uploadToCloudinary(file);
 		req.body.patient.profilePhoto = uploadResult?.secure_url;
 	}
-	const hasedPassword: string = await bcrypt.hash(req.body.password, 12);
+	const hasedPassword: string = await hashedPassword(req.body.password);
+
 	const userData = {
 		email: req.body.patient.email,
 		password: hasedPassword,

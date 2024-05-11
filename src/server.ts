@@ -2,7 +2,7 @@ import app from "./app";
 import { Server } from "http";
 import config from "./config";
 
-async function main() {
+async function bootstrap() {
 	const server: Server = app.listen(config.port, () => {
 		console.log("HealthCare Server is Running on PORT.....", config.port);
 	});
@@ -25,4 +25,4 @@ async function main() {
 	});
 
 }
-main();
+bootstrap();

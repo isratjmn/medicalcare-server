@@ -16,6 +16,7 @@ export default {
         reset_pass_token_expires_in: process.env.RESET_PASS_TOKEN_EXPIRES_IN,
     },
     reset_pass_link: process.env.RESET_PASSWORD_LINK,
+    bycrypt_salt_rounds: process.env.SALT_ROUND,
     emailSender: {
         email: process.env.EMAIL,
         app_password: process.env.APP_PASSWORD

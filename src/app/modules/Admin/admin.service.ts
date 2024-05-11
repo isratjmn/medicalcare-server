@@ -134,7 +134,8 @@ const deleteAdmin = async (id: string): Promise<Admin | null> => {
 const softDelete = async (id: string): Promise<Admin | null> => {
     await prisma.admin.findFirstOrThrow({
         where: {
-            id, isDeleted: false
+            id,
+            isDeleted: false
         }
     });
     const result = await prisma.$transaction(async (transcationClient) => {

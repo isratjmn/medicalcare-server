@@ -23,4 +23,4 @@ router.delete("/:id",
 
 router.get("/", SpecialitiesController.getAllFromDB);
 
-export const SpecialitiesRouters = router;
+export const SpecialitiesRouters = router

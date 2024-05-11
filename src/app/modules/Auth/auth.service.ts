@@ -19,23 +19,30 @@ const loginUser = async (payload: {
             status: UserStatus.ACTIVE
         }
     });
+
+
     const isCorrectPassword: boolean = await bcrypt.compare(payload.password, userData.password);
     if (!isCorrectPassword)
     {
         throw new Error("Password Incrrect");
     }
+    const { id: userId, role, email } = userData;
+
     const accessToken = JWTHelpers.generateToken(
         {
-            email: userData.email,
-            role: userData.role
+            userId,
+            email,
+            role
         },
         config.jwt.jwt_secret as Secret,
         config.jwt.expires_in as string
     );
+
     const refreshToken = JWTHelpers.generateToken(
         {
-            email: userData.email,
-            role: userData.role
+            userId,
+            email,
+            role
         },
         config.jwt.refresh_token_secret as Secret,
         config.jwt.refresh_token_expires_in as string

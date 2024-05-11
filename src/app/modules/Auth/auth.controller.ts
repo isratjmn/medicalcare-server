@@ -3,10 +3,12 @@ import catchAsync from "../../../shared/catchAsync";
 import { AuthService } from "./auth.service";
 import sendResponse from "../../../shared/sendResponse";
 import httpStatus from "http-status";
+import config from "../../../config";
 
 const loginUserFromDB = catchAsync(async (req: Request, res: Response) => {
     const result = await AuthService.loginUser(req.body);
     const { refreshToken } = result;
+
     res.cookie("refreshToken", refreshToken, {
         secure: false,
         httpOnly: true

@@ -7,7 +7,6 @@ import { Request, Response } from "express";
 import pick from "../../../shared/pick";
 import { doctorFilterableFields, doctorSearchableFields } from "./doctor.constant";
 
-
 const getAllFromDB = catchAsync(
     async (req: Request, res: Response) => {
         const filters = pick(
@@ -27,7 +26,7 @@ const getAllFromDB = catchAsync(
 );
 
 const updateIntoDB = catchAsync(
-    async (req, res) => {
+    async (req: Request, res: Response) => {
         const { id } = req.params;
         const result = await DoctorServices.updateIntoDB(id, req.body);
 
@@ -39,7 +38,37 @@ const updateIntoDB = catchAsync(
         });
     });
 
+
+const deleteFromDB = catchAsync(
+    async (req: Request, res: Response) => {
+        const { id } = req.params;
+        const result = await DoctorServices.deleteDoctor(id);
+        sendResponse(res, {
+            statusCode: httpStatus.OK,
+            success: true,
+            message: "Doctor Deleted Successfully !!!",
+            data: result
+        });
+    }
+);
+
+
+const softDeletedFromBD = catchAsync(
+    async (req: Request, res: Response) => {
+        const { id } = req.params;
+        const result = await DoctorServices.softDelete(id);
+        sendResponse(res, {
+            statusCode: httpStatus.OK,
+            success: true,
+            message: "Doctor Soft Deleted Successfully !!!",
+            data: result
+        });
+    }
+);
+
 export const DoctorController = {
     getAllFromDB,
-    updateIntoDB
+    updateIntoDB,
+    deleteFromDB,
+    softDeletedFromBD
 };

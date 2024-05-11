@@ -13,6 +13,7 @@ const createAdmin = catchAsync(
 	async (req: Request, res: Response) => {
 		const result = await userService.createAdmin(req);
 		sendResponse(res, {
+			statusCode: httpStatus.OK,
 			success: true,
 			message: "Admin Created Successfully!!",
 			data: result,
@@ -20,11 +21,11 @@ const createAdmin = catchAsync(
 	}
 );
 
-
 const createDoctor = catchAsync(
 	async (req: Request, res: Response) => {
 		const result = await userService.createDoctor(req);
 		sendResponse(res, {
+			statusCode: httpStatus.OK,
 			success: true,
 			message: "Doctor Created Successfully!!",
 			data: result,
@@ -35,6 +36,7 @@ const createPatient = catchAsync(
 	async (req: Request, res: Response) => {
 		const result = await userService.createPatient(req);
 		sendResponse(res, {
+			statusCode: httpStatus.OK,
 			success: true,
 			message: "Patient Created Successfully!!",
 			data: result,
