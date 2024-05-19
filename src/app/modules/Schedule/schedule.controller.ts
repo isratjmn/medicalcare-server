@@ -10,7 +10,6 @@ import { IPaginationOptions } from "../../interfaces/pagination";
 
 const createScheduleIntoDB = catchAsync(
     async (req: Request, res: Response) => {
-
         const result = await ScheduleService.createScheduleIntoDB(req.body);
         sendResponse(res, {
             statusCode: httpStatus.OK,
@@ -25,7 +24,6 @@ const getAllScheduleFromDB = catchAsync(
         const user = req.user;
         const filters = pick(req.query, ["startDate", "endDate"]);
         const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
-
         const result = await ScheduleService.getAllSchedule(filters, options as unknown as IPaginationOptions, user as IAuthUser);
         sendResponse(res, {
             statusCode: httpStatus.OK,
@@ -37,7 +35,6 @@ const getAllScheduleFromDB = catchAsync(
 
 const getScheduleByIdFromDB = catchAsync(
     async (req: Request & { user?: IAuthUser; }, res: Response) => {
-        
         const id = req.params.id;
         const result = await ScheduleService.getScheduleById(id);
         sendResponse(res, {

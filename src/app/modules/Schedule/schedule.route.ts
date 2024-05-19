@@ -6,11 +6,13 @@ const router = express.Router();
 
 router.post('/',
     auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
-    ScheduleController.createScheduleIntoDB);
+    ScheduleController.createScheduleIntoDB
+);
 
 router.get('/',
     auth(UserRole.DOCTOR),
-    ScheduleController.getAllScheduleFromDB);
+    ScheduleController.getAllScheduleFromDB
+);
 
 router.get("/:id", ScheduleController.getScheduleByIdFromDB);
 

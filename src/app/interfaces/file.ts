@@ -24,7 +24,7 @@ export type ICloudinaryResponse = {
 };
 
 
-export type IFile = {
+export type IUploadFile = {
     fieldname: string,
     originalname: string,
     encoding: string,

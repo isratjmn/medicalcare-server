@@ -25,18 +25,41 @@ const getAllFromDB = catchAsync(
     }
 );
 
-const updateIntoDB = catchAsync(
-    async (req: Request, res: Response) => {
-        const { id } = req.params;
-        const result = await DoctorServices.updateIntoDB(id, req.body);
-
-        sendResponse(res, {
-            statusCode: httpStatus.OK,
-            success: true,
-            message: "Doctor Data is Updated!!!",
-            data: result
+const getByIdFromDB = catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const result = await DoctorServices.getByIdFromDB(id);
+    if (!result)
+    {
+        return sendResponse(res, {
+            statusCode: httpStatus.NOT_FOUND,
+            success: false,
+            message: 'Doctor not found or has been deleted.',
+            data: null,
         });
+    }
+    return sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Doctor retrieved successfully!',
+        data: result,
     });
+
+});
+
+
+
+const updateIntoDB = catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const payload = req.body;
+    const { ...doctorData } = payload;
+    const result = await DoctorServices.updateIntoDB(id, doctorData);
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Doctor updated successfully',
+        data: result,
+    });
+});
 
 
 const deleteFromDB = catchAsync(
@@ -68,6 +91,7 @@ const softDeletedFromBD = catchAsync(
 
 export const DoctorController = {
     getAllFromDB,
+    getByIdFromDB,
     updateIntoDB,
     deleteFromDB,
     softDeletedFromBD

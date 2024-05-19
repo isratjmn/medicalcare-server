@@ -4,12 +4,14 @@ import { Request } from 'express';
 import { Admin, Doctor, Prisma, UserRole, UserStatus } from "@prisma/client";
 import prisma from "../../../shared/prisma";
 import { fileUploader } from "../../../helpers/FileUploader";
-import { IFile } from "../../interfaces/file";
+import { IFile, IUploadFile } from "../../interfaces/file";
 import { IPaginationOptions } from "../../interfaces/pagination";
 import { paginationHelper } from "../../../helpers/paginationHelper";
 
 import { IAuthUser } from '../../interfaces/common';
 import { hashedPassword } from './user.utils';
+import APIError from '../../errors/APIErrors';
+import httpStatus from 'http-status';
 
 
 const createAdmin = async (req: Request): Promise<Admin> => {
@@ -172,7 +174,7 @@ const changeProfileStatus = async (id: string,
 	return updateuserStatus;
 };
 
-
+/* 
 const getMyProfile = async (user: IAuthUser) => {
 	const userInfo = await prisma.user.findUniqueOrThrow({
 		where: {
@@ -225,9 +227,107 @@ const getMyProfile = async (user: IAuthUser) => {
 		...userInfo
 	};
 };
+ */
+
+const getMyProfile = async (authUser: any) => {
+	const userData = await prisma.user.findUnique({
+		where: {
+			id: authUser.userId,
+			status: UserStatus.ACTIVE
+		},
+		select: {
+			email: true,
+			role: true,
+			needPasswordChange: true,
+			status: true
+		}
+	});
+
+	let profileData;
+	if (userData?.role === UserRole.ADMIN)
+	{
+		profileData = await prisma.admin.findUnique({
+			where: {
+				email: userData.email
+			}
+		});
+	}
+	else if (userData?.role === UserRole.DOCTOR)
+	{
+		profileData = await prisma.doctor.findUnique({
+			where: {
+				email: userData.email
+			}
+		});
+	}
+	else if (userData?.role === UserRole.PATIENT)
+	{
+		profileData = await prisma.patient.findUnique({
+			where: {
+				email: userData.email
+			}
+		});
+	}
+	return { ...profileData, ...userData };
+};
+
+const updateMyProfile = async (authUser: any, req: Request) => {
+
+	const userData = await prisma.user.findUnique({
+		where: {
+			id: authUser.userId,
+			status: UserStatus.ACTIVE
+		}
+	});
+
+	if (!userData)
+	{
+		throw new APIError(httpStatus.BAD_REQUEST, "User does not exists!");
+	}
+
+	const file = req.file as IUploadFile;
+
+	if (file)
+	{
+		const uploadedProfileImage = await fileUploader.uploadToCloudinary(file);
+		req.body.profilePhoto = uploadedProfileImage?.secure_url;
+	}
+
+	let profileData;
+
+	if (userData?.role === UserRole.ADMIN)
+	{
+		profileData = await prisma.admin.update({
+			where: {
+				email: userData.email
+			},
+			data: req.body
+		});
+	}
+	else if (userData?.role === UserRole.DOCTOR)
+	{
+		profileData = await prisma.doctor.update({
+			where: {
+				email: userData.email
+			},
+			data: req.body
+		});
+	}
+	else if (userData?.role === UserRole.PATIENT)
+	{
+		profileData = await prisma.patient.update({
+			where: {
+				email: userData.email
+			},
+			data: req.body
+		});
+	}
+	return { ...profileData, ...userData };
+};
 
 
-const updateMyProfile = async (user: IAuthUser, req: Request) => {
+
+/* const updateMyProfile = async (user: IAuthUser, req: Request) => {
 	const userInfo = await prisma.user.findUniqueOrThrow({
 		where: {
 			email: user?.email,
@@ -278,7 +378,7 @@ const updateMyProfile = async (user: IAuthUser, req: Request) => {
 		...profileInfo
 	};
 
-};
+}; */
 
 
 export const userService = {

@@ -6,3 +6,24 @@ export type IDoctorFilterRequest = {
     appintmentFee?: string | undefined;
     specialities?: string | undefined;
 };
+
+
+export type IDoctorUpdate = {
+    name: string;
+    profilePhoto: string;
+    contactNumber: string;
+    address: string;
+    registrationNumber: string;
+    experience: number;
+    gender: 'MALE' | 'FEMALE';
+    appintmentFee: number;
+    qualification: string;
+    currentWorkingPlace: string;
+    designation: string;
+    specialities: ISpecialties[];
+};
+
+export type ISpecialties = {
+    specialitiesId: string;
+    isDeleted?: null;
+};

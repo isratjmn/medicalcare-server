@@ -75,7 +75,7 @@ const changeProfileStatus = catchAsync(
 		);
 	}
 );
-
+/* 
 const getMyProfile = catchAsync(
 	async (req: Request & { user?: IAuthUser; }, res: Response) => {
 		const user = req.user;
@@ -88,9 +88,21 @@ const getMyProfile = catchAsync(
 		}
 		);
 	}
-);
+); */
 
-const updateMyProfile = catchAsync(
+const getMyProfile = catchAsync(async (req: Request, res: Response) => {
+	const user = req.user;
+	const result = await userService.getMyProfile(user);
+
+	sendResponse(res, {
+		statusCode: httpStatus.OK,
+		success: true,
+		message: 'Profile data fetched!',
+		data: result
+	});
+});
+
+/* const updateMyProfile = catchAsync(
 	async (req: Request & { user?: IAuthUser; }, res: Response) => {
 		const user = req.user;
 		const result = await userService.updateMyProfile(user as IAuthUser, req);
@@ -102,7 +114,20 @@ const updateMyProfile = catchAsync(
 		}
 		);
 	}
-);
+); */
+
+const updateMyProfile = catchAsync(async (req: Request, res: Response) => {
+	const user = req.user;
+
+	const result = await userService.updateMyProfile(user, req);
+
+	sendResponse(res, {
+		statusCode: httpStatus.OK,
+		success: true,
+		message: 'Profile data fetched!',
+		data: result
+	});
+});
 
 export const userController = {
 	createAdmin,
