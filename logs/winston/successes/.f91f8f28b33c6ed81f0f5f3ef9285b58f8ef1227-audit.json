@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "F:\\Full_Stack_Dev\\Phero-lvl2\\Practice-Modules(own)\\healthcare-server\\logs\\winston\\successes\\.f91f8f28b33c6ed81f0f5f3ef9285b58f8ef1227-audit.json",
+    "files": [
+        {
+            "date": 1718155535157,
+            "name": "F:\\Full_Stack_Dev\\Phero-lvl2\\Practice-Modules(own)\\healthcare-server\\logs\\winston\\successes\\phu-2024-12-06-07-success.log",
+            "hash": "bc7a380c10f34dd8c0853b968e64401387d9ce5427dbc17be6bf56bafaae249e"
+        }
+    ],
+    "hashType": "sha256"
+}

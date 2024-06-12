@@ -1,33 +1,65 @@
-import { PrismaClientKnownRequestError, PrismaClientValidationError } from "@prisma/client/runtime/library";
-import { NextFunction, Request, Response } from "express";
-import httpStatus from "http-status";
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-unused-expressions */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
+import config from "../../config";
+import { Prisma } from "@prisma/client";
+import { ZodError } from "zod";
+import { errorlogger } from "../../shared/logger";
+import { IGenericErrorMessage } from "../../interface/errors";
+import ApiError from "../errors/APIErrors";
+import handleValidationError from "../errors/handleValidationError";
+import handleZodError from "../errors/handleZodError";
+import handleClientError from "../errors/handleClientError";
 
-const globalErrorHnadlers = (err: any, req: Request, res: Response, next: NextFunction) => {
+const globalErrorHandler: ErrorRequestHandler = (
+	error,
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	config.env === "development"
+		? console.log(`🐱‍🏍 globalErrorHandler ~~`, { error })
+		: errorlogger.error(`🐱‍🏍 globalErrorHandler ~~`, error);
 
-    let statusCode = httpStatus.INTERNAL_SERVER_ERROR;
-    let success = false;
-    let message = err?.message || "Something Went Wrong !!!";
-    let error = err;
+	let statusCode = 500;
+	let message = "Something went wrong !";
+	let errorMessages: IGenericErrorMessage[] = [];
 
-    if (err instanceof PrismaClientValidationError)
-    {
-        message = "Validation Error.....!!";
-        error = err.message;
-    } else if (err instanceof PrismaClientKnownRequestError)
-    {
-        if (err.code === "P2002")
-        {
-            message = "Duplicate Key Error";
-            error = err.meta;
+	if (error instanceof Prisma.PrismaClientValidationError) {
+		const simplifiedError = handleValidationError(error);
+		statusCode = simplifiedError.statusCode;
+		message = simplifiedError.message;
+		errorMessages = simplifiedError.errorMessages;
+	} else if (error instanceof ZodError) {
+		const simplifiedError = handleZodError(error);
+		statusCode = simplifiedError.statusCode;
+		message = simplifiedError.message;
+		errorMessages = simplifiedError.errorMessages;
+	} else if (error instanceof Prisma.PrismaClientKnownRequestError) {
+		const simplifiedError = handleClientError(error);
+		statusCode = simplifiedError.statusCode;
+		message = simplifiedError.message;
+		errorMessages = simplifiedError.errorMessages;
+	} else if (error instanceof ApiError) {
+		statusCode = error?.statusCode;
+		message = error.message;
+		errorMessages = error?.message
+			? [{ path: "", message: error?.message }]
+			: [];
+	} else if (error instanceof Error) {
+		message = error?.message;
+		errorMessages = error?.message
+			? [{ path: "", message: error?.message }]
+			: [];
+	}
 
-        }
-    }
-
-    res.status(statusCode).json({
-        success,
-        message,
-        error
-    });
+	res.status(statusCode).json({
+		success: false,
+		message,
+		errorMessages,
+		stack: config.env !== "production" ? error?.stack : undefined,
+	});
 };
 
-export default globalErrorHnadlers;
+export default globalErrorHandler;

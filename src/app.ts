@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import express, { Application, NextFunction, Request, Response } from "express";
 import cors from "cors";
-import { Server } from "http";
 import router from "./app/routes";
 import httpStatus from "http-status";
 import globalErrorHnadlers from "./app/middlewares/globalErrorHandlers";

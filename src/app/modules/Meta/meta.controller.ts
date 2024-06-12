@@ -5,21 +5,22 @@ import httpStatus from "http-status";
 import { MetaService } from "./meta.service";
 import { IAuthUser } from "../../interfaces/common";
 
-
 const fetchDashboardMetaData = catchAsync(
-    async (req: Request & { user: IAuthUser; }, res: Response) => {
-        const user = req.user;
+	async (req: Request & { user: IAuthUser }, res: Response) => {
+		const user = req.user;
 
-        const result = await MetaService.fetchDashboardMetaData(user as IAuthUser);
-        sendResponse(res, {
-            statusCode: httpStatus.OK,
-            success: true,
-            message: "Meta data Retrival Successfully .....!!",
-            data: result
-        });
-    });
+		const result = await MetaService.fetchDashboardMetaData(
+			user as IAuthUser
+		);
+		sendResponse(res, {
+			statusCode: httpStatus.OK,
+			success: true,
+			message: "Meta data Retrival Successfully .....!!",
+			data: result,
+		});
+	}
+);
 
 export const MetaController = {
-    fetchDashboardMetaData
-}
-
+	fetchDashboardMetaData,
+};

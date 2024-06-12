@@ -7,8 +7,7 @@ async function bootstrap() {
 		console.log("HealthCare Server is Running on PORT.....", config.port);
 	});
 	const existHandler = () => {
-		if (server)
-		{
+		if (server) {
 			server.close(() => {
 				console.info("Server Closed....");
 			});
@@ -23,6 +22,5 @@ async function bootstrap() {
 		console.log(error);
 		existHandler();
 	});
-
 }
 bootstrap();

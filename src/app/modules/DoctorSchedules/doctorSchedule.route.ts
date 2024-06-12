@@ -2,7 +2,6 @@
 import express from 'express';
 import { doctorScheduleController } from './doctorSchedule.controller';
 import auth from '../../middlewares/auth';
-import { UserRole } from '@prisma/client';
 import { ENUM_USER_ROLE } from '../../../enums/user';
 
 const router = express.Router();

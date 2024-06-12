@@ -1,7 +1,6 @@
 import { adminValidationSchema } from './admin.validation';
 import express from 'express';
 import { AdminController } from './admin.controller';
-import { z } from "zod";
 import validateRequest from '../../middlewares/validateReqyuest';
 import auth from '../../middlewares/auth';
 import { UserRole } from '@prisma/client';

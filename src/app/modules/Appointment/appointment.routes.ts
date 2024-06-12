@@ -11,7 +11,6 @@ router.get("/my-appointment",
 
 router.post("/",
     auth(UserRole.PATIENT),
-    // Add Zod Validation to Create Appointment
     AppointmentController.createAppointment);
 
 /*
