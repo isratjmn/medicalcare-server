@@ -1,4 +1,4 @@
-import { PamentStatus, UserRole } from "@prisma/client";
+import {  PaymentStatus, UserRole } from "@prisma/client";
 import { IAuthUser } from "../../interfaces/common";
 import prisma from "../../../shared/prisma";
 
@@ -32,7 +32,7 @@ const getSuperAdminMetaData = async () => {
 	const totalRevenue = await prisma.payment.aggregate({
 		_sum: { amount: true },
 		where: {
-			status: PamentStatus.PAID,
+			status: PaymentStatus.PAID,
 		},
 	});
 	const barChartData = await getBarChatData();
@@ -57,7 +57,7 @@ const getAdminMetaData = async () => {
 	const totalRevenue = await prisma.payment.aggregate({
 		_sum: { amount: true },
 		where: {
-			status: PamentStatus.PAID,
+			status: PaymentStatus.PAID,
 		},
 	});
 	const barChartData = await getBarChatData();
@@ -103,7 +103,7 @@ const getDoctorMetaData = async (user: IAuthUser) => {
 			appointment: {
 				doctorId: doctorData.id,
 			},
-			status: PamentStatus.PAID,
+			status: PaymentStatus.PAID,
 		},
 	});
 

@@ -8,22 +8,6 @@ import pick from "../../../shared/pick";
 import { appointmentFilterableFields } from "./appointment.constant";
 import { IPaginationOptions } from "../../interfaces/pagination";
 
-/* const createAppointment = catchAsync(
-	async (req: Request & { user?: IAuthUser }, res: Response) => {
-		const user = req.user;
-		const result = await AppointmentService.createAppointment(
-			user as IAuthUser,
-			req.body
-		);
-		sendResponse(res, {
-			statusCode: httpStatus.OK,
-			success: true,
-			message: "Appointment Booked Successfully....!!",
-			data: result,
-		});
-	}
-); */
-
 const createAppointment = catchAsync(
 	async (req: Request & { user?: IAuthUser }, res: Response) => {
 		const user = req.user;
@@ -68,31 +52,6 @@ const getMyAppointment = catchAsync(
 		});
 	}
 );
-
-/* const getMyAppointment = catchAsync(
-	async (req: Request & { user?: IAuthUser }, res: Response) => {
-		const filters = pick(req.query, appointmentFilterableFields);
-		const options = pick(req.query, [
-			"limit",
-			"page",
-			"sortBy",
-			"sortOrder",
-		]);
-		const user = req?.user;
-		const result = await AppointmentService.getMyAppointmentIntoDB(
-			filters,
-			options,
-			user as IAuthUser
-		);
-		sendResponse(res, {
-			statusCode: httpStatus.OK,
-			success: true,
-			message: "Appointment retrieval successfully",
-			meta: result.meta,
-			data: result.data,
-		});
-	}
-); */
 
 const changeAppointmentStatus = catchAsync(
 	async (req: Request & { user?: IAuthUser }, res: Response) => {

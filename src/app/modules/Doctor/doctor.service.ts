@@ -64,7 +64,7 @@ const getAllDoctors = async (
 		andConditions.length > 0
 			? {
 					AND: andConditions,
-			  }
+			}
 			: {};
 
 	const result = await prisma.doctor.findMany({
@@ -75,7 +75,7 @@ const getAllDoctors = async (
 			options.sortBy && options.sortOrder
 				? {
 						[options.sortBy]: options.sortOrder,
-				  }
+				}
 				: { averageRating: "desc" },
 		include: {
 			doctorSpecialties: {

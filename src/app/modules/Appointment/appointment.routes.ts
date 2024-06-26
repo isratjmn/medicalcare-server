@@ -17,12 +17,6 @@ router.post(
 	AppointmentController.createAppointment
 );
 
-/*
-get all appointments with filter 
-only accessable for admin & Super Admin
-endpoint: /appointment 
- */
-
 router.patch(
 	"/status/:id",
 	auth(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.DOCTOR),

@@ -97,9 +97,7 @@ const changePassword = async (user: { email: any }, payload: any) => {
 	if (!isCorrectPassword) {
 		throw new Error("Password Incrrect");
 	}
-	// const hasedPassword: string = await bcrypt.hash(payload.newPassword, 8);
 	const salt = await bcrypt.genSalt(10);
-	// Hash the new password using the generated salt
 	const hashedPassword = await bcrypt.hash(payload.newPassword, salt);
 	await prisma.user.update({
 		where: {
