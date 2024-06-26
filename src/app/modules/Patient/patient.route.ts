@@ -5,17 +5,12 @@ import { UserRole } from "@prisma/client";
 
 const router = express.Router();
 
-router.get("/",
-    auth(UserRole.PATIENT),
-    PatientControllers.getAllFromDB);
+router.get("/", auth(UserRole.PATIENT), PatientControllers.getAllFromDB);
 
-router.get("/:id",
-    PatientControllers.getPatientById);
+router.get("/:id", PatientControllers.getPatientById);
 
-router.patch('/:id', PatientControllers.updateIntoDB);
-
-router.delete('/:id', PatientControllers.deleteFromDB);
-
-router.delete('/soft/:id', PatientControllers.softDeletefromDB);
+router.patch("/:id", PatientControllers.updateIntoDB);
+router.delete("/:id", PatientControllers.deleteFromDB);
+router.delete("/soft/:id", PatientControllers.softDeletefromDB);
 
 export const PatientRoutes = router;

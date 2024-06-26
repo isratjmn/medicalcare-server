@@ -62,7 +62,7 @@ const getMyAppointment = catchAsync(
 		sendResponse(res, {
 			statusCode: httpStatus.OK,
 			success: true,
-			message: "Appointment retrieval successfully",
+			message: "Appointment retrieval successfully..!",
 			meta: result.meta,
 			data: result.data,
 		});

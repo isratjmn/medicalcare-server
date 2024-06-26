@@ -266,7 +266,7 @@ const getMyAppointmentIntoDB = async (
 				: { createdAt: "desc" },
 		include:
 			authUser?.role === UserRole.PATIENT
-				? { doctor: true, schedule: true }
+				? { doctor: true, schedule: true, patient: true }
 				: {
 						patient: {
 							include: {
@@ -303,7 +303,6 @@ const changeAppointmentStatus = async (
 			doctor: true,
 		},
 	});
-
 	if (user?.role === UserRole.DOCTOR) {
 		if (!(user.email === appointmentData?.doctor.email)) {
 			throw new APIError(
@@ -312,7 +311,6 @@ const changeAppointmentStatus = async (
 			);
 		}
 	}
-
 	const result = await prisma.appointment.update({
 		where: {
 			id: appointmentId,
@@ -334,11 +332,9 @@ const cancelUnpaidAppointments = async () => {
 			paymentStatus: PaymentStatus.UNPAID,
 		},
 	});
-
 	const appointmentIdsToCancel = unPaidAppointments.map(
 		(appointment) => appointment.id
 	);
-
 	await prisma.$transaction(async (tx) => {
 		await tx.payment.deleteMany({
 			where: {
@@ -354,7 +350,6 @@ const cancelUnpaidAppointments = async () => {
 				},
 			},
 		});
-
 		for (const unPaidAppointment of unPaidAppointments) {
 			await tx.doctorSchedules.updateMany({
 				where: {
