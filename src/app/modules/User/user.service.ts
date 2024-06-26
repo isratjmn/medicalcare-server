@@ -16,7 +16,6 @@ const createAdmin = async (req: Request): Promise<Admin> => {
 	const file = req.file as IUploadFile;
 	if (file) {
 		const uploadResult = await fileUploader.uploadToCloudinary(file);
-		// Assuming 'profilePhoto' is a field in the admin's data
 		req.body.admin.profilePhoto = uploadResult?.secure_url;
 	}
 	const hasedPassword: string = await hashedPassword(req.body.password);
@@ -43,7 +42,6 @@ const createDoctor = async (req: Request): Promise<Doctor> => {
 	if (file) {
 		// If a file is uploaded, upload it to Cloudinary
 		const uploadResult = await fileUploader.uploadToCloudinary(file);
-		// Assuming 'profilePhoto' is a field in the admin's data
 		req.body.doctor.profilePhoto = uploadResult?.secure_url;
 	}
 	const hasedPassword: string = await hashedPassword(req.body.password);

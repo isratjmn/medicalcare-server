@@ -42,10 +42,7 @@ const createScheduleIntoDB = async (
 				startDateTime: startDate,
 				endDateTime: endDate,
 			};
-			/* const scheduleData = {
-                startDateTime: startDateTime,
-                endDateTime: addMinutes(startDateTime, intervalTime)
-            }; */
+			
 			const existingSchedule = await prisma.schedule.findFirst({
 				where: {
 					startDateTime: scheduleData.startDateTime,
