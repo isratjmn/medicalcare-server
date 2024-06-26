@@ -6,10 +6,26 @@ import sendResponse from "../../../shared/sendResponse";
 import httpStatus from "http-status";
 import catchAsync from "../../../shared/catchAsync";
 
+interface IPaginationOptions {
+	limit: number;
+	page: number;
+	sortBy?: string;
+	sortOrder?: string;
+}
+
 const getAllAdminsFromDB: RequestHandler = catchAsync(async (req, res) => {
 	const filters = pick(req.query, adminFilterableFields);
-	const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
+	const defaultOptions: IPaginationOptions = {
+		limit: 10,
+		page: 1,
+	};
+	const options = {
+		...defaultOptions,
+		...pick(req.query, ["limit", "page", "sortBy", "sortOrder"]),
+	} as IPaginationOptions;
+
 	const result = await AdminService.getAllAdmin(filters, options);
+
 	sendResponse(res, {
 		statusCode: httpStatus.OK,
 		success: true,
@@ -18,7 +34,6 @@ const getAllAdminsFromDB: RequestHandler = catchAsync(async (req, res) => {
 		data: result.data,
 	});
 });
-
 const getByIdFromDB = catchAsync(async (req: Request, res: Response) => {
 	const id = req.params.id;
 	const result = await AdminService.getById(id);

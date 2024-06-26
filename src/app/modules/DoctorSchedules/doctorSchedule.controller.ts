@@ -17,8 +17,8 @@ interface IPaginationOptions {
 const getAllDoctorSchedule = catchAsync(async (req: Request, res: Response) => {
 	const filters = pick(req.query, scheduleFilterableFields);
 	const defaultOptions: IPaginationOptions = {
-		limit: 10, 
-		page: 1, 
+		limit: 10,
+		page: 1,
 	};
 	const options = {
 		...defaultOptions,
@@ -56,6 +56,31 @@ const createDoctorSchedule = catchAsync(
 const getMyDoctorSchedule = catchAsync(
 	async (req: Request & { user?: IAuthUser }, res: Response) => {
 		const filters = pick(req.query, ["startDate", "endDate", "isBooked"]);
+		const defaultOptions: IPaginationOptions = {
+			limit: 10,
+			page: 1,
+		};
+		const options = {
+			...defaultOptions,
+			...pick(req.query, ["limit", "page", "sortBy", "sortOrder"]),
+		} as IPaginationOptions;
+		// const user = req.user;
+		const result = await doctorScheduleService.getMyDSIntoDB(
+			filters,
+			options
+		);
+		sendResponse(res, {
+			statusCode: httpStatus.OK,
+			success: true,
+			message: "Doctor Schedule Retrieved Successfully ....!!!",
+			data: result,
+		});
+	}
+);
+
+/* const getMyDoctorSchedule = catchAsync(
+	async (req: Request & { user?: IAuthUser }, res: Response) => {
+		const filters = pick(req.query, ["startDate", "endDate", "isBooked"]);
 		const options = pick(req.query, [
 			"limit",
 			"page",
@@ -75,13 +100,12 @@ const getMyDoctorSchedule = catchAsync(
 			data: result,
 		});
 	}
-);
+); */
 
 const deleteMyDoctorSchedule = catchAsync(
 	async (req: Request & { user?: IAuthUser }, res: Response) => {
 		const user = req.user;
 		const { id } = req.params;
-
 		const result = await doctorScheduleService.deleteFromDB(
 			user as IAuthUser,
 			id

@@ -1,6 +1,6 @@
-export type IPaginationOptions = {
-	page?: number;
+export interface IPaginationOptions {
 	limit: number;
-	sortBy?: string | undefined;
-	sortOrder?: string | undefined;
-};
+	page: number;
+	sortBy?: string;
+	sortOrder?: string;
+}

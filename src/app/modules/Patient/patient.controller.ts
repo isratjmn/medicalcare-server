@@ -6,11 +6,25 @@ import { PatientServices } from "./patient.service";
 import pick from "../../../shared/pick";
 import { patientFilterableFields } from "./patient.constant";
 
+interface IPaginationOptions {
+	limit: number;
+	page: number;
+	sortBy?: string;
+	sortOrder?: string;
+}
+
 const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
 	const filters = pick(req.query, patientFilterableFields);
-	const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
-	const result = await PatientServices.getAllPatient(filters, options);
+	const defaultOptions: IPaginationOptions = {
+		limit: 10,
+		page: 1,
+	};
 
+	const options = {
+		...defaultOptions,
+		...pick(req.query, ["limit", "page", "sortBy", "sortOrder"]),
+	} as IPaginationOptions;
+	const result = await PatientServices.getAllPatient(filters, options);
 	sendResponse(res, {
 		statusCode: httpStatus.OK,
 		success: true,
@@ -20,10 +34,10 @@ const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
 	});
 });
 
+
 const getPatientById = catchAsync(async (req: Request, res: Response) => {
 	const { id } = req.params;
 	const singlePatient = await PatientServices.singlePatientt(id);
-
 	sendResponse(res, {
 		statusCode: httpStatus.OK,
 		success: true,
@@ -31,6 +45,7 @@ const getPatientById = catchAsync(async (req: Request, res: Response) => {
 		data: singlePatient,
 	});
 });
+
 
 const updateIntoDB = catchAsync(async (req: Request, res: Response) => {
 	const { id } = req.params;
@@ -43,6 +58,7 @@ const updateIntoDB = catchAsync(async (req: Request, res: Response) => {
 	});
 });
 
+
 const deleteFromDB = catchAsync(async (req: Request, res: Response) => {
 	const { id } = req.params;
 	const result = await PatientServices.deletePatient(id);
@@ -54,6 +70,7 @@ const deleteFromDB = catchAsync(async (req: Request, res: Response) => {
 	});
 });
 
+
 const softDeletefromDB = catchAsync(async (req: Request, res: Response) => {
 	const { id } = req.params;
 	const result = await PatientServices.softDeletePatient(id);
@@ -64,6 +81,7 @@ const softDeletefromDB = catchAsync(async (req: Request, res: Response) => {
 		data: result,
 	});
 });
+
 
 export const PatientControllers = {
 	getAllFromDB,

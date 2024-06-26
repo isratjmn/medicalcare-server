@@ -93,7 +93,6 @@ const getAllDoctors = (filters, options) => __awaiter(void 0, void 0, void 0, fu
             },
         },
     });
-    // Transform the result to include specialities directly
     const transformedResult = result.map((doctor) => (Object.assign(Object.assign({}, doctor), { specialities: doctor.doctorSpecialties.map((ds) => ds.specialities) })));
     const total = yield prisma_1.default.doctor.count({
         where: whereConditions,

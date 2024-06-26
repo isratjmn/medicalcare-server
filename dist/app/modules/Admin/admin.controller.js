@@ -21,7 +21,11 @@ const http_status_1 = __importDefault(require("http-status"));
 const catchAsync_1 = __importDefault(require("../../../shared/catchAsync"));
 const getAllAdminsFromDB = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const filters = (0, pick_1.default)(req.query, admin_constant_1.adminFilterableFields);
-    const options = (0, pick_1.default)(req.query, ["limit", "page", "sortBy", "sortOrder"]);
+    const defaultOptions = {
+        limit: 10,
+        page: 1,
+    };
+    const options = Object.assign(Object.assign({}, defaultOptions), (0, pick_1.default)(req.query, ["limit", "page", "sortBy", "sortOrder"]));
     const result = yield admin_service_1.AdminService.getAllAdmin(filters, options);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,

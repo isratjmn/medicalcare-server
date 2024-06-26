@@ -21,12 +21,16 @@ const pick_1 = __importDefault(require("../../../shared/pick"));
 const doctorSchedule_constants_1 = require("./doctorSchedule.constants");
 const getAllDoctorSchedule = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const filters = (0, pick_1.default)(req.query, doctorSchedule_constants_1.scheduleFilterableFields);
-    const options = (0, pick_1.default)(req.query, ['limit', 'page', 'sortBy', 'sortOrder']);
+    const defaultOptions = {
+        limit: 10,
+        page: 1,
+    };
+    const options = Object.assign(Object.assign({}, defaultOptions), (0, pick_1.default)(req.query, ["limit", "page", "sortBy", "sortOrder"]));
     const result = yield doctorSchedule_service_1.doctorScheduleService.getAllDoctorSchedule(filters, options);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
-        message: 'Doctor Schedule retrieval successfully',
+        message: "Doctor Schedule retrieval successfully",
         meta: result.meta,
         data: result.data,
     });
@@ -38,21 +42,48 @@ const createDoctorSchedule = (0, catchAsync_1.default)((req, res) => __awaiter(v
         statusCode: http_status_1.default.OK,
         success: true,
         message: "Doctor Schedule Created Successfully ....!!!",
-        data: result
+        data: result,
     });
 }));
 const getMyDoctorSchedule = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const filters = (0, pick_1.default)(req.query, ["startDate", "endDate", "isBooked"]);
-    const options = (0, pick_1.default)(req.query, ["limit", "page", "sortBy", "sortOrder"]);
-    const user = req.user;
-    const result = yield doctorSchedule_service_1.doctorScheduleService.getMyDSIntoDB(filters, options, user);
+    const defaultOptions = {
+        limit: 10,
+        page: 1,
+    };
+    const options = Object.assign(Object.assign({}, defaultOptions), (0, pick_1.default)(req.query, ["limit", "page", "sortBy", "sortOrder"]));
+    // const user = req.user;
+    const result = yield doctorSchedule_service_1.doctorScheduleService.getMyDSIntoDB(filters, options);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
-        message: "Doctor Schedule Retrive Successfully ....!!!",
-        data: result
+        message: "Doctor Schedule Retrieved Successfully ....!!!",
+        data: result,
     });
 }));
+/* const getMyDoctorSchedule = catchAsync(
+    async (req: Request & { user?: IAuthUser }, res: Response) => {
+        const filters = pick(req.query, ["startDate", "endDate", "isBooked"]);
+        const options = pick(req.query, [
+            "limit",
+            "page",
+            "sortBy",
+            "sortOrder",
+        ]);
+        const user = req.user;
+        const result = await doctorScheduleService.getMyDSIntoDB(
+            filters,
+            options as unknown as IPaginationOptions,
+            user as IAuthUser
+        );
+        sendResponse(res, {
+            statusCode: httpStatus.OK,
+            success: true,
+            message: "Doctor Schedule Retrive Successfully ....!!!",
+            data: result,
+        });
+    }
+); */
 const deleteMyDoctorSchedule = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = req.user;
     const { id } = req.params;
@@ -61,12 +92,12 @@ const deleteMyDoctorSchedule = (0, catchAsync_1.default)((req, res) => __awaiter
         statusCode: http_status_1.default.OK,
         success: true,
         message: "My Doctor Schedule Deleted Successfully ....!!!",
-        data: result
+        data: result,
     });
 }));
 exports.doctorScheduleController = {
     getAllDoctorSchedule,
     createDoctorSchedule,
     getMyDoctorSchedule,
-    deleteMyDoctorSchedule
+    deleteMyDoctorSchedule,
 };

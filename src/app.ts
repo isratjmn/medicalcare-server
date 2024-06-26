@@ -11,9 +11,9 @@ const app: Application = express();
 
 app.use(
 	cors({
-		origin: ['http://localhost:3000', 'http://localhost:3001'],
+		origin: ["http://localhost:3000", "http://localhost:3001"],
 		credentials: true,
-	}),
+	})
 );
 app.use(cookieParser());
 
@@ -25,13 +25,11 @@ app.use(
 	})
 );
 
-cron.schedule('* * * * *', () => {
-	console.log('running a task every minute');
-	try
-	{
+cron.schedule("* * * * *", () => {
+	console.log("running a task every minute");
+	try {
 		AppointmentService.cancelUnpaidAppointments();
-	} catch (err)
-	{
+	} catch (err) {
 		console.log(err);
 	}
 });
@@ -51,8 +49,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 		message: "API Not Found !!!",
 		error: {
 			path: req.originalUrl,
-			message: "Your Requested Path is not Found !!!"
-		}
+			message: "Your Requested Path is not Found !!!",
+		},
 	});
 });
 

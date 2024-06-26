@@ -30,17 +30,16 @@ const InsertPrescriptionIntoDB = (0, catchAsync_1.default)((req, res) => __await
 }));
 const patientPrescription = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = req.user;
-    const options = (0, pick_1.default)(req.query, [
-        "limit",
-        "page",
-        "sortBy",
-        "sortOrder",
-    ]);
+    const defaultOptions = {
+        limit: 10,
+        page: 1,
+    };
+    const options = Object.assign(Object.assign({}, defaultOptions), (0, pick_1.default)(req.query, ["limit", "page", "sortBy", "sortOrder"]));
     const result = yield prescription_service_1.PrescriptionServices.patientPrescription(user, options);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
-        message: "My Prescription Feched Successfully...!!",
+        message: "My Prescription Fetched Successfully...!!",
         meta: result.meta,
         data: result.data,
     });

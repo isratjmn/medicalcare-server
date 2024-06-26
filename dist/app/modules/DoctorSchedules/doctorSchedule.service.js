@@ -170,7 +170,6 @@ const getMyDSIntoDB = (filters, options) => __awaiter(void 0, void 0, void 0, fu
     };
 });
 const deleteFromDB = (user, scheduleId) => __awaiter(void 0, void 0, void 0, function* () {
-    // Find the doctor data based on the user's email
     const doctorData = yield prisma_1.default.doctor.findUnique({
         where: {
             email: user === null || user === void 0 ? void 0 : user.email,
@@ -179,7 +178,6 @@ const deleteFromDB = (user, scheduleId) => __awaiter(void 0, void 0, void 0, fun
     if (!doctorData) {
         throw new APIErrors_1.default(http_status_1.default.NOT_FOUND, "Doctor not found.");
     }
-    // Check if the schedule is already booked
     const isBookedSchedule = yield prisma_1.default.doctorSchedules.findFirst({
         where: {
             doctorId: doctorData.id,
@@ -190,7 +188,6 @@ const deleteFromDB = (user, scheduleId) => __awaiter(void 0, void 0, void 0, fun
     if (isBookedSchedule) {
         throw new APIErrors_1.default(http_status_1.default.BAD_REQUEST, "You cannot delete the schedule because it is already booked.");
     }
-    // Delete the schedule
     yield prisma_1.default.doctorSchedules.delete({
         where: {
             doctorId_scheduleId: {

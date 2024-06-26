@@ -22,15 +22,25 @@ const InsertPrescriptionIntoDB = catchAsync(
 	}
 );
 
+interface IPaginationOptions {
+	limit: number;
+	page: number;
+	sortBy?: string;
+	sortOrder?: string;
+}
+
 const patientPrescription = catchAsync(
 	async (req: Request & { user?: IAuthUser }, res: Response) => {
 		const user = req.user;
-		const options = pick(req.query, [
-			"limit",
-			"page",
-			"sortBy",
-			"sortOrder",
-		]);
+		const defaultOptions: IPaginationOptions = {
+			limit: 10,
+			page: 1,
+		};
+		const options = {
+			...defaultOptions,
+			...pick(req.query, ["limit", "page", "sortBy", "sortOrder"]),
+		} as IPaginationOptions;
+
 		const result = await PrescriptionServices.patientPrescription(
 			user as IAuthUser,
 			options
@@ -38,13 +48,12 @@ const patientPrescription = catchAsync(
 		sendResponse(res, {
 			statusCode: httpStatus.OK,
 			success: true,
-			message: "My Prescription Feched Successfully...!!",
+			message: "My Prescription Fetched Successfully...!!",
 			meta: result.meta,
 			data: result.data,
 		});
 	}
 );
-
 export const PrescriptionControllers = {
 	InsertPrescriptionIntoDB,
 	patientPrescription,

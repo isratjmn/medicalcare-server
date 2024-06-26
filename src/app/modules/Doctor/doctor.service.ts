@@ -31,7 +31,6 @@ const getAllDoctors = async (
 			})),
 		});
 	}
-
 	if (specialities && specialities.length > 0) {
 		andConditions.push({
 			doctorSpecialties: {
@@ -46,7 +45,6 @@ const getAllDoctors = async (
 			},
 		});
 	}
-
 	if (Object.keys(filterData).length > 0) {
 		const filterConditions = Object.keys(filterData).map((key) => ({
 			[key]: {
@@ -55,18 +53,15 @@ const getAllDoctors = async (
 		}));
 		andConditions.push(...filterConditions);
 	}
-
 	andConditions.push({
 		isDeleted: false,
 	});
-
 	const whereConditions: Prisma.DoctorWhereInput =
 		andConditions.length > 0
 			? {
 					AND: andConditions,
 			}
 			: {};
-
 	const result = await prisma.doctor.findMany({
 		where: whereConditions,
 		skip,
@@ -85,13 +80,10 @@ const getAllDoctors = async (
 			},
 		},
 	});
-
-	// Transform the result to include specialities directly
 	const transformedResult = result.map((doctor) => ({
 		...doctor,
 		specialities: doctor.doctorSpecialties.map((ds) => ds.specialities),
 	}));
-
 	const total = await prisma.doctor.count({
 		where: whereConditions,
 	});
@@ -122,7 +114,6 @@ const getByIdFromDB = async (id: string) => {
 			review: true,
 		},
 	});
-
 	return result;
 };
 
@@ -150,12 +141,10 @@ const updateIntoDB = async (
 				(speciality) =>
 					speciality.specialitiesId && speciality.isDeleted
 			);
-
 			const newSpecialities = specialities.filter(
 				(speciality) =>
 					speciality.specialitiesId && !speciality.isDeleted
 			);
-
 			await asyncForEach(
 				deleteSpecialities,
 				async (deleteDoctorSpeciality: ISpecialties) => {
@@ -186,7 +175,6 @@ const updateIntoDB = async (
 									insertDoctorSpeciality.specialitiesId,
 							},
 						});
-
 					if (!existingSpecialities) {
 						await transactionClient.doctorSpecialties.create({
 							data: {
@@ -201,7 +189,6 @@ const updateIntoDB = async (
 		}
 		return result;
 	});
-
 	const responseData = await prisma.doctor.findUnique({
 		where: {
 			id,
